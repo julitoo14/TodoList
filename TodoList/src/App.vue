@@ -25,12 +25,15 @@
 
     <Alert :message="alert.message" :show="alert.show" @close="alert.show = false" :type=alert.type />
     <section>
-      <AddTodoForm @submit="addTodo" />
+      <AddTodoForm @submit="addTodo" :isLoading="isPostingTodo"/>
     </section>
 
     <section>
-      <Todo v-for="todo in todos" :key="todo.id" :title="todo.title" @remove="removeTodo(todo.id)"
-        @edit="showEditTodoForm(todo)" />
+      <Spinner v-if="isLoading" class="spinner"/>
+      <div v-else>
+        <Todo v-for="todo in todos" :key="todo.id" :title="todo.title" @remove="removeTodo(todo.id)"
+          @edit="showEditTodoForm(todo)" />
+      </div>
     </section>
   </main>
 </template>
@@ -43,6 +46,7 @@ import Todo from "./components/Todo.vue";
 import Modal from "./components/Modal.vue";
 import Btn from './components/Btn.vue';
 import axios from "axios";
+import Spinner from './components/Spinner.vue';
 
 const component = {
   components: {
@@ -51,7 +55,8 @@ const component = {
     AddTodoForm,
     Todo,
     Modal,
-    Btn
+    Btn,
+    Spinner
   },
 
   data() {
@@ -63,14 +68,17 @@ const component = {
         show: false,
         message: "",
         type: "danger",
-      },  
+      },
+      formButtonDisabled: false,
+      isLoading: false,
+      isPostingTodo:false,  
       editTodoForm: {
         show: false,
         todo: {
           id: 0,
           title: "",
         }
-      }
+      },
     };
   },
 
@@ -88,13 +96,14 @@ const component = {
     },
 
     async fetchTodos(){
+      this.isLoading = true;
       try{
       const res = await axios.get('http://localhost:8080/todos');
       this.todos = res.data;
       }catch(e){
-        this.showAlert("Failed loading todos, check your internet connection");
+        this.showAlert("Failed loading todos");
       }
-
+      this.isLoading = false; 
     },
 
     async addTodo(title) {
@@ -103,14 +112,18 @@ const component = {
         return;
       }
 
+      this.isPostingTodo = true;
       const res = await axios.post('http://localhost:8080/todos', {title})
       this.todos.push(res.data);
+      this.isPostingTodo = false;
       this.alert.show = false;
     },
 
     async removeTodo(id) {
+      this.isLoading = true;
       await axios.delete(`http://localhost:8080/todos/${id}`);
       this.todos = this.todos.filter((todo) => todo.id !== id);
+      this.isLoading = false;
     },
 
     showEditTodoForm(todo) {
@@ -150,5 +163,10 @@ export default component;
 
 .edit-todo-submit-btn {
   margin-right: 5px;
+}
+
+.spinner{
+  margin: auto;
+  margin-top: 30px;
 }
 </style>

@@ -55,6 +55,11 @@ button {
   border: black solid 2px;
 }
 
+.btn:disabled{
+  opacity: 70%;
+  
+}
+
 .circle {
   border-radius: 50%;
 }
