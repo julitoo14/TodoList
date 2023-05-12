@@ -21,19 +21,11 @@
     </Modal>
 </template>
 
-<script>
+<script setup>
 import Modal from './Modal.vue';
 import Btn from './Btn.vue';
-export default {
-    components:{
-        Modal,
-        Btn,
-    },
-
-    props:['modelValue', 'show'],
-
-    emits: ['close','update','update:modelValue']
-}
+const props = defineProps(['modelValue', 'show']);
+const emit = defineEmits(['close','update','update:modelValue']);
 </script>
 
 <style scoped>

@@ -1,33 +1,29 @@
 <template>
   <div class="todo">
-    <p>{{ title }}</p>
+    <p>{{ props.title }}</p>
     <div>
-      <Btn class="btn edit-todo-btn" circle @click="$emit('edit')" variant="secondary">
+      <Btn class="btn edit-todo-btn" circle @click="emit('edit')" variant="secondary">
         <Pencil />
       </Btn>
-      <Btn class="btn" circle @click="$emit('remove')" variant="danger">
+      <Btn class="btn" circle @click="emit('remove')" variant="danger">
         <Trash />
       </Btn>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import Btn from "./Btn.vue"
 import Pencil from "./icons/Pencil.vue"
 import Trash from "./icons/Trash.vue"
-export default {
-  components: { Btn, Pencil, Trash },
 
-  props: {
-    title: {
+const props = defineProps({
+  title: {
       required: true,
       type: String,
     },
-  },
-
-  emits: ['remove', 'edit']
-};
+});
+const emit = defineEmits(['remove', 'edit']);
 
 </script>
 
