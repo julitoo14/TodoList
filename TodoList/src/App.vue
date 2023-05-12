@@ -2,20 +2,16 @@
   <Navbar />
 
   <main class="container">
-    <EditTodoForm 
-      :show="editTodoForm.show"
-      @close="editTodoForm.show = false"
-      @update="updateTodo"
-      v-model="editTodoForm.todo.title"
-      />
+    <EditTodoForm :show="editTodoForm.show" @close="editTodoForm.show = false" @update="updateTodo"
+      v-model="editTodoForm.todo.title" />
 
     <Alert :message="alert.message" :show="alert.show" @close="alert.show = false" :type=alert.type />
     <section>
-      <AddTodoForm @submit="addTodo" :isLoading="isPostingTodo"/>
+      <AddTodoForm @submit="addTodo" :isLoading="isPostingTodo" />
     </section>
 
     <section>
-      <Spinner v-if="isLoading" class="spinner"/>
+      <Spinner v-if="isLoading" class="spinner" />
       <div v-else>
         <Todo v-for="todo in todos" :key="todo.id" :title="todo.title" @remove="removeTodo(todo.id)"
           @edit="showEditTodoForm(todo)" />
@@ -24,118 +20,91 @@
   </main>
 </template>
 
-<script>
+<script setup>
 import Alert from "./components/Alert.vue";
 import Navbar from "./components/Navbar.vue";
 import AddTodoForm from "./components/addTodoForm.vue";
 import Todo from "./components/Todo.vue";
-import Modal from "./components/Modal.vue";
-import Btn from './components/Btn.vue';
 import axios from "axios";
 import Spinner from './components/Spinner.vue';
 import EditTodoForm from "./components/EditTodoForm.vue";
+import { reactive } from "vue";
+import { ref } from "vue";
 
-const component = {
-  components: {
-    Alert,
-    Navbar,
-    AddTodoForm,
-    Todo,
-    Modal,
-    Btn,
-    Spinner,
-    EditTodoForm,
-    
-  },
-
-  data() {
-    return {
-      todoTitle: "",
-      todos: [],
-      counter: 0,
-      alert: {
-        show: false,
-        message: "",
-        type: "danger",
-      },
-      formButtonDisabled: false,
-      isLoading: false,
-      isPostingTodo:false,  
-      editTodoForm: {
-        show: false,
-        todo: {
-          id: 0,
-          title: "",
-        }
-      },
-    };
-  },
-
-  created(){
-    this.fetchTodos();
-  },
+const todos = ref([]);
+const alert = reactive({
+  show: false,
+  message: "",
+  type: "danger",
+});
+const isLoading = ref(false);
+const isPostingTodo = ref(false);
+const editTodoForm = reactive({
+  show: false,
+  todo: {
+    id: 0,
+    title: "",
+  }
+});
 
 
-  methods: {
+const showAlert = (message, type) => {
+  alert.show = true;
+  alert.message = message;
+  alert.type = type;
+}
 
-    showAlert(message, type){
-      this.alert.show = true;
-      this.alert.message = message;
-      this.alert.type = type;
-    },
+const showEditTodoForm = (todo) => {
+  editTodoForm.show = true;
+  editTodoForm.todo = { ...todo }; // guardo una copia del todo para que con el v-model no se me actualice mi objeto directamente
+}
 
-    async fetchTodos(){
-      this.isLoading = true;
-      try{
-      const res = await axios.get('/api/todos');
-      this.todos = res.data;
-      }catch(e){
-        this.showAlert("Failed loading todos");
-      }
-      this.isLoading = false; 
-    },
+const fetchTodos = async () => {
+  isLoading.value = true;
+  try {
+    const res = await axios.get('/api/todos');
+    todos.value = res.data;
+  } catch (e) {
+    showAlert("Failed loading todos");
+  }
+  isLoading.value = false;
+}
+fetchTodos();
 
-    async addTodo(title) {
-      if (title === "") {
-        this.showAlert("Todo title is required", "danger");
-        return;
-      }
 
-      this.isPostingTodo = true;
-      const res = await axios.post('/api/todos', {title})
-      this.todos.push(res.data);
-      this.isPostingTodo = false;
-      this.alert.show = false;
-    },
+const addTodo = async (title) => {
+  if (title === "") {
+    showAlert("Todo title is required", "danger");
+    return;
+  }
 
-    async removeTodo(id) {
-      this.isLoading = true;
-      await axios.delete(`api/todos/${id}`);
-      this.todos = this.todos.filter((todo) => todo.id !== id);
-      this.isLoading = false;
-    },
+  isPostingTodo.value = true;
+  const res = await axios.post('/api/todos', { title })
+  todos.value.push(res.data);
+  isPostingTodo.value = false;
+  alert.show = false;
+}
 
-    showEditTodoForm(todo) {
-      this.editTodoForm.show = true;
-      this.editTodoForm.todo = { ...todo }; // guardo una copia del todo para que con el v-model no se me actualice mi objeto directamente
-    },
+const removeTodo = async (id) => {
+  isLoading.value = true;
+  await axios.delete(`api/todos/${id}`);
+  todos.value = todos.value.filter((todo) => todo.id !== id);
+  isLoading.value = false;
+}
 
-    async updateTodo() {
-      this.editTodoForm.show = false;
-      this.isLoading = true;
-      const todo = this.todos.find(todo => todo.id === this.editTodoForm.todo.id);
-      todo.title = this.editTodoForm.todo.title;
-      await axios.put(`/api/todos/${todo.id}`, todo);
-      this.isLoading= false;
-    },
-  },
-};
-export default component;
+const updateTodo = async () => {
+  editTodoForm.show = false;
+  isLoading.value = true;
+  const todo = todos.value.find(todo => todo.id === editTodoForm.todo.id);
+  todo.title = editTodoForm.todo.title;
+  await axios.put(`/api/todos/${todo.id}`, todo);
+  isLoading.value = false;
+}
+
 </script>
 
 <style scoped>
-
-.spinner{
+.spinner {
   margin: auto;
   margin-top: 30px;
 }
