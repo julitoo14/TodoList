@@ -1,5 +1,5 @@
 <template>
-    <div class="spinner"></div>
+  <div class="spinner"></div>
 </template>
 
 <style scoped>
@@ -22,5 +22,4 @@
     transform: rotate(360deg);
   }
 }
-
 </style>

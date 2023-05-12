@@ -1,48 +1,50 @@
 <template>
-  <button :style="{ backgroundColor: backgroundColor }" @click.prevent="emit('click')" :class="{ circle: applyCircleClass }"
-    v-bind="$attrs">
+  <button
+    :style="{ backgroundColor: backgroundColor }"
+    @click.prevent="emit('click')"
+    :class="{ circle: applyCircleClass }"
+    v-bind="$attrs"
+  >
     <slot />
   </button>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 
+const emit = defineEmits(["click"]);
+const props = defineProps({
+  variant: {
+    required: false,
+    default: "success",
+    validator(value) {
+      const options = ["danger", "warning", "info", "success", "secondary"];
 
-  const emit = defineEmits(['click']);
-  const props = defineProps({
-    variant: {
-      required: false,
-      default: "success",
-      validator(value) {
-        const options = ["danger", "warning", "info", "success", "secondary"];
-
-        return options.includes(value);
-      },
+      return options.includes(value);
     },
+  },
 
-    circle: {
-      default: false,
-      type: Boolean,
-    },
-  });
+  circle: {
+    default: false,
+    type: Boolean,
+  },
+});
 
-    const applyCircleClass = computed(() =>{
-      return props.circle;
-    });
-  
-  
-    const backgroundColor = computed(() => {
-      const options = {
-        danger: "var(--danger-color)",
-        success: "var(--accent-color)",
-        info: "var(--info-color)",
-        warning: "var(--warning-color)",
-        secondary: "var(--secondary-color)"
-      };
+const applyCircleClass = computed(() => {
+  return props.circle;
+});
 
-      return options[props.variant];
-    });
+const backgroundColor = computed(() => {
+  const options = {
+    danger: "var(--danger-color)",
+    success: "var(--accent-color)",
+    info: "var(--info-color)",
+    warning: "var(--warning-color)",
+    secondary: "var(--secondary-color)",
+  };
+
+  return options[props.variant];
+});
 </script>
 
 <style scoped>
@@ -56,9 +58,8 @@ button {
   border: black solid 2px;
 }
 
-.btn:disabled{
+.btn:disabled {
   opacity: 70%;
-  
 }
 
 .circle {

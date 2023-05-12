@@ -2,7 +2,12 @@
   <div class="todo">
     <p>{{ props.title }}</p>
     <div>
-      <Btn class="btn edit-todo-btn" circle @click="emit('edit')" variant="secondary">
+      <Btn
+        class="btn edit-todo-btn"
+        circle
+        @click="emit('edit')"
+        variant="secondary"
+      >
         <Pencil />
       </Btn>
       <Btn class="btn" circle @click="emit('remove')" variant="danger">
@@ -13,18 +18,17 @@
 </template>
 
 <script setup>
-import Btn from "./Btn.vue"
-import Pencil from "./icons/Pencil.vue"
-import Trash from "./icons/Trash.vue"
+import Btn from "./Btn.vue";
+import Pencil from "./icons/Pencil.vue";
+import Trash from "./icons/Trash.vue";
 
 const props = defineProps({
   title: {
-      required: true,
-      type: String,
-    },
+    required: true,
+    type: String,
+  },
 });
-const emit = defineEmits(['remove', 'edit']);
-
+const emit = defineEmits(["remove", "edit"]);
 </script>
 
 <style scoped>
@@ -38,7 +42,7 @@ const emit = defineEmits(['remove', 'edit']);
   border-radius: 10px;
 }
 
-.todo>div {
+.todo > div {
   display: flex;
 }
 

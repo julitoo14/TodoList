@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar">
-    <img src="@/assets/logo.svg" width="50"/>
+    <img src="@/assets/logo.svg" width="50" />
     <div class="brand">Todo List app</div>
   </nav>
 </template>

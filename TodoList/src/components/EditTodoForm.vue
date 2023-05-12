@@ -1,31 +1,34 @@
 <template>
-    <Modal :show="show" @close="$emit('close')">
-      <template v-slot:header>
-        <h2>Edit Todo</h2>
-      </template>
+  <Modal :show="show" @close="$emit('close')">
+    <template v-slot:header>
+      <h2>Edit Todo</h2>
+    </template>
 
-      <template v-slot:content>
-        <form @submit.prevent class="edit-todo-form">
-          <label>Todo Title</label>
-          <input type="text" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)">
-        </form>
-      </template>
+    <template v-slot:content>
+      <form @submit.prevent class="edit-todo-form">
+        <label>Todo Title</label>
+        <input
+          type="text"
+          :value="modelValue"
+          @input="$emit('update:modelValue', $event.target.value)"
+        />
+      </form>
+    </template>
 
-      <template v-slot:footer>
-        <div class="edit-todo-modal-footer">
-          <Btn class="edit-todo-submit-btn" @click="$emit('update')">Submit</Btn>
-          <Btn variant="danger" @click="$emit('close')">Close</Btn>
-        </div>
-      </template>
-
-    </Modal>
+    <template v-slot:footer>
+      <div class="edit-todo-modal-footer">
+        <Btn class="edit-todo-submit-btn" @click="$emit('update')">Submit</Btn>
+        <Btn variant="danger" @click="$emit('close')">Close</Btn>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <script setup>
-import Modal from './Modal.vue';
-import Btn from './Btn.vue';
-const props = defineProps(['modelValue', 'show']);
-const emit = defineEmits(['close','update','update:modelValue']);
+import Modal from "./Modal.vue";
+import Btn from "./Btn.vue";
+const props = defineProps(["modelValue", "show"]);
+const emit = defineEmits(["close", "update", "update:modelValue"]);
 </script>
 
 <style scoped>
@@ -51,5 +54,4 @@ const emit = defineEmits(['close','update','update:modelValue']);
 .edit-todo-submit-btn {
   margin-right: 5px;
 }
-
 </style>
