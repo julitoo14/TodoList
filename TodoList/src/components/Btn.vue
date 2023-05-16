@@ -1,16 +1,13 @@
 <template>
-  <button
-    :style="{ backgroundColor: backgroundColor }"
-    @click.prevent="emit('click')"
-    :class="{ circle: applyCircleClass }"
-    v-bind="$attrs"
-  >
+  <button :style="{ backgroundColor: backgroundColor }" @click.prevent="emit('click')"
+    :class="{ circle: applyCircleClass }" v-bind="$attrs">
     <slot />
   </button>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import { useBackgroundColor } from "../composables/backgroundColor";
 
 const emit = defineEmits(["click"]);
 const props = defineProps({
@@ -34,17 +31,7 @@ const applyCircleClass = computed(() => {
   return props.circle;
 });
 
-const backgroundColor = computed(() => {
-  const options = {
-    danger: "var(--danger-color)",
-    success: "var(--accent-color)",
-    info: "var(--info-color)",
-    warning: "var(--warning-color)",
-    secondary: "var(--secondary-color)",
-  };
-
-  return options[props.variant];
-});
+const backgroundColor = useBackgroundColor(props);
 </script>
 
 <style scoped>
